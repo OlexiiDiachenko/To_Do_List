@@ -1,0 +1,390 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+/*General Settings */
+
+[data-theme="light"] {
+  --main-text-color: #000;
+  --checked-text-color: rgba(51, 46, 46, 0.5);
+  --button-icon-color: #ffff62;
+  --background-document-color: #fff;
+  --background-header-color: #efe8df;
+  --background-list-color: #f8efe4;
+  --border-list-color: #5b5964;
+  --border-completed: lightgreen;
+  --background-menu-color: rgba(255, 255, 255, 0.6);
+  --border-menu-color: #000;
+  --footer-height: 40px;
+}
+
+[data-theme="dark"] {
+  --main-text-color: #d9e1da;
+  --checked-text-color: rgba(173, 155, 155, 0.808);
+  --button-icon-color: #fff;
+  --background-document-color: #050b23;
+  --background-header-color: #322c30;
+  --background-list-color: #0f2548;
+  --border-list-color: #fffbf4;
+  --border-completed: green;
+  --background-menu-color: rgba(0, 0, 0, 0.6);
+  --border-menu-color: #d9e1da;
+  --footer-height: 40px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--main-text-color);
+}
+
+/* HTML */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body */
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--background-document-color);
+  color: var(--main-text-color);
+  font-family: "Poppins", sans-serif;
+  overflow-y: auto;
+}
+
+/* Header */
+
+header {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: var(--background-header-color);
+}
+
+header h1 {
+  font-size: 60px;
+  line-height: 75px;
+}
+
+/* Toogle Button Theme */
+
+header button.toggle {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-25px);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 30px;
+  color: var(--button-icon-color);
+  background-color: #f6d2a8;
+}
+
+/* Night Version */
+
+button.toggle.active {
+  background-color: rgba(10, 4, 57, 0.6);
+}
+
+/* Main Content */
+
+main {
+  box-sizing: border-box;
+  padding-right: 40px;
+  padding-bottom: calc(var(--footer-height) + 10px);
+  padding-left: 40px;
+}
+
+/* Elements With Lists */
+
+.content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* Point With Tasks Close Version */
+
+section.list {
+  box-sizing: border-box;
+  background-color: var(--background-list-color);
+  border: 1px solid var(--border-list-color);
+  border-radius: 30px;
+  padding: 15px 10px;
+  position: relative;
+  max-width: 300px;
+  width: 100%;
+  max-height: 400px;
+}
+
+section.list:hover {
+  cursor: grab;
+}
+
+section.list:active {
+  cursor: grabbing;
+}
+
+section.list::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+section.list button {
+  display: none;
+}
+
+/* Point With Tasks Active Version */
+section.list.active {
+  max-width: 100%;
+  min-height: 60%;
+}
+
+section.list.active::after {
+  height: 0;
+  width: 0;
+}
+
+section.list.active button {
+  display: block;
+}
+/* Point Header */
+
+.list h2 {
+  font-size: 25px;
+  line-height: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--main-text-color);
+  margin-bottom: 10px;
+}
+
+/* Point Content */
+
+ul {
+  padding-left: 0;
+  margin: 0;
+}
+
+ul.task-list + ul.task-list {
+  margin-top: 15px;
+}
+
+li {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
+
+li + li {
+  margin-top: 10px;
+}
+
+/* Tasks */
+
+input[type="checkbox"] {
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
+}
+
+label {
+  font-size: 25px;
+  line-height: 35px;
+  color: var(--main-text-color);
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked + label {
+  color: var(--checked-text-color);
+}
+
+/* List With Comleted Tasks */
+
+ul.completed {
+  border-top: 1px dashed var(--border-completed);
+}
+
+p {
+  width: 100%;
+  word-wrap: break-word;
+  letter-spacing: 1.5px;
+  font-size: 18px;
+  line-height: 30px;
+}
+
+/* Button Save Changes */
+
+.save {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 20px;
+  padding: 5px;
+  background-color: transparent;
+}
+
+/* Footer */
+
+footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--footer-height);
+  background-color: var(--background-header-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Footer Buttons */
+
+footer ul {
+  display: flex;
+  align-items: center;
+}
+
+footer ul li {
+  margin-top: 0;
+  margin-left: 30px;
+}
+
+footer ul li button {
+  background-color: transparent;
+  font-size: 20px;
+  color: var(--main-text-color);
+}
+
+/* User Create Menu */
+
+/* Menu Wrapper */
+
+.menu-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--background-menu-color);
+  z-index: 3;
+  display: none;
+}
+
+.menu-wrapper.active {
+  display: block;
+}
+
+/* Context Menu */
+
+.list-point-menu,
+.note-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-height: 600px;
+  border: 1px solid var(--border-menu-color);
+  z-index: 4;
+  padding: 20px 20px 40px;
+  background-color: var(--background-document-color);
+  display: none;
+}
+
+.list-point-menu.active,
+.note-menu.active {
+  display: block;
+}
+
+/* Menu Footer With Button For Add */
+
+.menu-footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+/* Button Add Note On Page */
+
+button.add-note {
+  background-color: transparent;
+  color: var(--main-text-color);
+}
+
+input[type="text"],
+input.point,
+textarea {
+  width: 100%;
+  outline: none;
+  border: none;
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+/* List Point Settings */
+
+input[type="text"].menu-header {
+  color: var(--main-text-color);
+  background-color: transparent;
+  border-bottom: 1px solid var(--main-text-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+input.point {
+  color: var(--main-text-color);
+  background-color: transparent;
+  border-bottom: 1px solid var(--main-text-color);
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+button.point-add {
+  background-color: transparent;
+  color: var(--main-text-color);
+  font-size: 18px;
+  margin-top: 15px;
+}
+
+textarea {
+  padding: 5px 10px;
+  max-width: 100%;
+  min-height: 50px;
+  resize: vertical;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+      integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="./script/app.js" defer></script>
+    <title>To Do List</title>
+  </head>
+  <body>
+    <header>
+      <h1>To do list</h1>
+      <button class="toggle" type="button"></button>
+    </header>
+    <main id="main">
+      <div class="content-wrapper"></div>
+      <div class="menu-wrapper">
+        <div class="list-point-menu" onclick="event.stopPropagation();">
+          <div class="menu-main">
+            <input
+              class="menu-header"
+              type="text"
+              name="head"
+              id="head-list"
+              placeholder="Write a caption"
+            />
+            <div class="inputs">
+              <input type="text" class="point" />
+            </div>
+            <button class="point-add" type="button">
+              <i class="fa-solid fa-plus"></i> add a item
+            </button>
+          </div>
+          <div class="menu-footer">
+            <button class="add-note" type="button">
+              <i class="fa-solid fa-thumbtack"></i> add
+            </button>
+          </div>
+        </div>
+        <div class="note-menu" onclick="event.stopPropagation();">
+          <div class="menu-main">
+            <input
+              class="menu-header"
+              type="text"
+              name="head"
+              id="head-note"
+              placeholder="Write a caption"
+            />
+            <textarea placeholder="Write your note"></textarea>
+          </div>
+          <div class="menu-footer">
+            <button class="add-note" type="button">
+              <i class="fa-solid fa-thumbtack"></i> add
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <ul class="footer">
+        <li class="button" title="Add List">
+          <button class="list-point" type="button">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </li>
+        <li class="button" title="Add Note">
+          <button class="note" type="button">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+        </li>
+      </ul>
+    </footer>
+  </body>
+</html>

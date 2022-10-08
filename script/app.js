@@ -94,10 +94,14 @@ const newInputCreate = () => {
   return newInput;
 };
 
-// Add new input for list
 addPoint.onclick = () => {
-  inputsContainer.appendChild(newInputCreate());
+  createNewField(inputsContainer);
 };
+
+// Add new input for list
+function createNewField(parent) {
+  parent.appendChild(newInputCreate());
+}
 
 // Close Menu Constructor with saving values
 
@@ -217,7 +221,7 @@ const pushToStorage = (element, index) => {
 
   let itemsContent = JSON.stringify(arr);
 
-  localStorage.setItem(`"list${index}"`, itemsContent);
+  localStorage.setItem(`"list${Number(index)}"`, itemsContent);
 };
 
 // Clear menu for next using
@@ -244,13 +248,23 @@ contentWrapper.onclick = (e) => {
   let buttonSave;
   if (e.target.tagName == "SECTION" && !e.target.classList.contains("active")) {
     if (document.querySelector("section.active")) {
-      document.querySelector("section.active").classList.remove("active");
+      let closeItem = document.querySelector("section.active");
+      removeItem(closeItem, "BUTTON");
+      closeItem.classList.remove("active");
     }
     e.target.classList.add("active");
     createButtonSave(e.target);
     createEditButton(e.target);
   } else {
     return;
+  }
+};
+
+// Function for remove item or items frome parent Node
+const removeItem = (parentElement, item) => {
+  while (parentElement.lastChild.tagName == item) {
+    let lastCloseItemChild = parentElement.lastChild;
+    lastCloseItemChild.remove();
   }
 };
 
@@ -272,18 +286,95 @@ const createEditButton = (element) => {
   editButton.setAttribute("class", "edit");
   editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
   element.appendChild(editButton);
+  if (element.querySelector("label")) {
+    editButton.addEventListener("click", setEditList);
+  } // else {
+  // editButton.addEventListener("click", setEditNote);
+  //}
 };
 
+// Function for get changes for List
+const setEditList = () => {
+  document.querySelector(".edit").disabled = "true";
+  let ul = document.querySelector(".active ul");
+  createAddInputButton(ul);
+  getIds("label");
+  getData("label");
+};
+
+// Create button "Add a new item"
+const createAddInputButton = (parent) => {
+  parent.insertAdjacentHTML(
+    "afterEnd",
+    `<button class="point-add" type="button"><i class="fa-solid fa-plus"></i> add a item</button>`
+  );
+};
+
+// Get All data in Ul in List
+
+// Get Ids
+const getIds = (element) => {
+  let ul = document.querySelector(".active ul");
+  let items = document.querySelectorAll(`.active ${element}`);
+  let ids = [];
+  items.forEach((item) => {
+    let siblingId = item.previousElementSibling.getAttribute("id");
+    ids.push(siblingId);
+  });
+  document.querySelector(".active .point-add").onclick = () => {
+    createNewListField(ul, ids);
+  };
+};
+
+// Change tags from label to input:text
+const getData = (element) => {
+  let labels = document.querySelectorAll(`.active ${element}`);
+  let elements = [];
+  labels.forEach((item) => {
+    let value = item.innerHTML;
+    item.outerHTML = `<input type='text' class='new-data' value='${value}' />`;
+  });
+};
+
+// Create a new field in List for update data
+const createNewListField = (parent, forArr) => {
+  let index = Number(forArr[forArr.length - 1]) + 1;
+  let newField = document.createElement("li");
+  newField.innerHTML = `<input type="checkbox" id="${index}" />
+  <input type='text' class="new-data"/>`;
+  parent.append(newField);
+  forArr.push(index);
+};
+
+// Function for get changes for Note
+const setEditNote = () => {
+  let labels = document.querySelector(".active p");
+  let paragraph = labels.getAttribute("data-list-number");
+};
+
+// Set new values for List
+const newValuesList = (parent) => {
+  let newDatas = parent.querySelectorAll("input.new-data");
+  newDatas.forEach((data) => {
+    let idToFor = data.previousElementSibling.getAttribute("id");
+    let value = data.value;
+    data.outerHTML = `<label for="${idToFor}">${value}</label>`;
+  });
+};
+
+// Fucntion for close list and set new values. SET CHANGES
 const updateDate = (e) => {
+  let element = document.querySelector("section.active");
+  if (element.querySelector("input.new-data")) {
+    newValuesList(element);
+  } //else {
+  //   newValuesNote(element);
+  // }
   let wrapper = e.target.parentElement;
-  // console.log(wrapper.lastChild.tagName);
-  let number = e.target.previousElementSibling.getAttribute("data-list-number");
-  while (wrapper.lastChild.tagName == "BUTTON") {
-    let lastWrapperChild = wrapper.lastChild;
-    lastWrapperChild.remove();
-  }
+  let number =
+    document.querySelector(".active ul").getAttribute("data-list-number") ||
+    document.querySelector(".active textarea").getAttribute("data-list-number");
+  removeItem(wrapper, "BUTTON");
   pushToStorage(wrapper, number);
   wrapper.classList.remove("active");
 };
-
-const setEdit = (element) => {};

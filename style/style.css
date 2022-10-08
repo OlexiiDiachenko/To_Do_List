@@ -166,11 +166,12 @@ section.list button {
 
 section.list.active {
   grid-column: span 4;
+  max-height: 100%;
 }
 
 section.list.active::after {
-  height: 0;
-  width: 0;
+  height: 0px;
+  width: 0px;
 }
 
 section.list.active button {
@@ -227,6 +228,19 @@ input[type="checkbox"]:checked + label {
   color: var(--checked-text-color);
 }
 
+input[type="checkbox"]:checked + label::after {
+  content: "Completed!";
+  width: max-content;
+  position: absolute;
+  top: 0;
+  right: max-content;
+  color: green;
+}
+
+section.list.close input[type="checkbox"]:checked + label::after {
+  content: "";
+}
+
 /* List With Comleted Tasks */
 
 ul.completed {
@@ -242,15 +256,21 @@ p {
 }
 
 /* Button Save Changes */
-
-.save {
+.save,
+.edit {
   position: absolute;
   right: 20px;
-  bottom: 20px;
   font-size: 20px;
   padding: 5px;
   background-color: transparent;
   color: var(--main-text-color);
+}
+.save {
+  bottom: 20px;
+}
+
+.edit {
+  top: 20px;
 }
 
 /* Footer */
@@ -445,6 +465,12 @@ textarea {
 
   section.list.active {
     max-width: 100%;
+  }
+
+  /* Save Changes */
+  .save {
+    right: 15px;
+    bottom: 15px;
   }
 
   /* Context Menu */

@@ -124,6 +124,13 @@ addNoteButtons.forEach((button) => {
   button.addEventListener("click", addNoteFunc);
 });
 
+// Set Event for 'Enter' to create a new note
+window.addEventListener("keydown", (e) => {
+  if (event.keyCode === 13) {
+    addNoteFunc();
+  }
+});
+
 // Function for creating a new section for note
 const newNoteCreate = () => {
   const newNote = document.createElement("section");
@@ -157,12 +164,12 @@ const createList = () => {
 
 // Create our Ul list for our WorkList
 const createListContent = () => {
-  let ul = document.createElement("ul");
   correctIndex();
+  let ul = document.createElement("ul");
+  ul.setAttribute("data-list-number", `${i}`);
   let values = listPointMenu.querySelectorAll(".point");
   values.forEach((el, index) => {
     let li = document.createElement("li");
-    li.setAttribute("data-list-number", `${i}`);
     li.innerHTML = `<input type="checkbox" id="${i}${index}"/><label for="${i}${index}">${el.value}</label>`;
     ul.appendChild(li);
   });
@@ -174,20 +181,13 @@ const createListContent = () => {
 
 // Create our paragraph for Note
 const createNoteContent = () => {
+  correctIndex();
   let value = noteMenu.querySelector("textarea").value;
   let p = document.createElement("p");
+  p.setAttribute("data-list-number", `${i}`);
   p.innerHTML = value;
 
   return p;
-};
-
-// Create a Button "Save"
-const createButtonSave = () => {
-  let saveAll = document.createElement("button");
-  saveAll.setAttribute("class", "save");
-  saveAll.innerHTML = "Save";
-
-  return saveAll;
 };
 
 // Collect and push our list or note
@@ -199,11 +199,10 @@ function addNoteFunc() {
   } else {
     newList.appendChild(createNoteContent());
   }
-  newList.appendChild(createButtonSave());
 
   contentWrapper.append(newList);
 
-  pushToStorage();
+  pushToStorage(contentWrapper.lastChild, i);
 
   let mainMenu = document.querySelector(".active .menu-main");
   clearMenu(mainMenu);
@@ -211,14 +210,14 @@ function addNoteFunc() {
 
 // Function for add note to Storage
 
-const pushToStorage = () => {
+const pushToStorage = (element, index) => {
   let arr = {};
 
-  arr["content"] = contentWrapper.lastChild.innerHTML;
+  arr["content"] = element.innerHTML;
 
   let itemsContent = JSON.stringify(arr);
 
-  localStorage.setItem(`"list${i}"`, itemsContent);
+  localStorage.setItem(`"list${index}"`, itemsContent);
 };
 
 // Clear menu for next using
@@ -248,27 +247,43 @@ contentWrapper.onclick = (e) => {
       document.querySelector("section.active").classList.remove("active");
     }
     e.target.classList.add("active");
-    buttonSave = e.target.querySelector(".save");
-    buttonSave.onclick = updateDate;
+    createButtonSave(e.target);
+    createEditButton(e.target);
   } else {
     return;
   }
 };
 
-function updateDate(e) {
-  let arr = {};
-  let listsArray = contentWrapper.children;
-  let arrElements = [];
-  for (let i = 0; i < listsArray.length; i++) {
-    arrElements.push(listsArray[i]);
+// Functions suppots for open our list
+
+// Create a Button "Save"
+const createButtonSave = (element) => {
+  let saveAll = document.createElement("button");
+  saveAll.setAttribute("class", "save");
+  saveAll.innerHTML = "Save";
+  saveAll.addEventListener("click", updateDate);
+
+  element.append(saveAll);
+};
+
+//  Create Edit Button
+const createEditButton = (element) => {
+  let editButton = document.createElement("button");
+  editButton.setAttribute("class", "edit");
+  editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+  element.appendChild(editButton);
+};
+
+const updateDate = (e) => {
+  let wrapper = e.target.parentElement;
+  // console.log(wrapper.lastChild.tagName);
+  let number = e.target.previousElementSibling.getAttribute("data-list-number");
+  while (wrapper.lastChild.tagName == "BUTTON") {
+    let lastWrapperChild = wrapper.lastChild;
+    lastWrapperChild.remove();
   }
-  elementNumber = arrElements.indexOf(e.target.parentElement);
+  pushToStorage(wrapper, number);
+  wrapper.classList.remove("active");
+};
 
-  arr["content"] = listsArray[elementNumber].innerHTML;
-
-  let itemsContent = JSON.stringify(arr);
-
-  localStorage.setItem(`"list${elementNumber + 1}"`, itemsContent);
-
-  listsArray[elementNumber].classList.remove("active");
-}
+const setEdit = (element) => {};

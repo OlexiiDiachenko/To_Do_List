@@ -158,10 +158,6 @@ section.list::after {
   z-index: 2;
 }
 
-section.list button {
-  display: none;
-}
-
 /* Point With Tasks Active Version */
 
 section.list.active {
@@ -172,10 +168,6 @@ section.list.active {
 section.list.active::after {
   height: 0px;
   width: 0px;
-}
-
-section.list.active button {
-  display: block;
 }
 /* Point Header */
 

@@ -221,16 +221,14 @@ input[type="checkbox"]:checked + label {
 }
 
 input[type="checkbox"]:checked + label::after {
-  content: "Completed!";
+  content: "";
   width: max-content;
   position: absolute;
   top: 0;
-  right: max-content;
-  color: green;
-}
-
-section.list.close input[type="checkbox"]:checked + label::after {
-  content: "";
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 255, 0, 0.5);
 }
 
 /* List With Comleted Tasks */

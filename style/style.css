@@ -78,6 +78,7 @@ header {
   justify-content: center;
   position: relative;
   background-color: var(--background-header-color);
+  box-sizing: border-box;
 }
 
 header h1 {
@@ -120,9 +121,8 @@ main {
 .content-wrapper {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
 }
 
@@ -135,9 +135,9 @@ section.list {
   border-radius: 30px;
   padding: 15px 10px;
   position: relative;
-  max-width: 300px;
   width: 100%;
-  max-height: 400px;
+  max-height: 200px;
+  overflow: hidden;
 }
 
 section.list:hover {
@@ -163,9 +163,9 @@ section.list button {
 }
 
 /* Point With Tasks Active Version */
+
 section.list.active {
-  max-width: 100%;
-  min-height: 60%;
+  grid-column: span 4;
 }
 
 section.list.active::after {
@@ -250,6 +250,7 @@ p {
   font-size: 20px;
   padding: 5px;
   background-color: transparent;
+  color: var(--main-text-color);
 }
 
 /* Footer */
@@ -387,4 +388,70 @@ textarea {
   max-width: 100%;
   min-height: 50px;
   resize: vertical;
+}
+
+@media (min-width: 900px) and (max-width: 1200px) {
+  .content-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  section.list.active {
+    grid-column: span 3;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  /* Header */
+  header {
+    padding-left: 40px;
+    justify-content: flex-start;
+  }
+
+  .content-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  section.list.active {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 599px) {
+  /* Header */
+
+  header {
+    height: 70px;
+    margin-bottom: 15px;
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
+  header h1 {
+    font-size: 48px;
+    line-height: 60px;
+  }
+
+  /* Main */
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  section.list {
+    max-width: 320px;
+  }
+
+  section.list.active {
+    max-width: 100%;
+  }
+
+  /* Context Menu */
+
+  .list-point-menu,
+  .note-menu {
+    width: 80vw;
+    padding: 20px 20px 40px;
+  }
 }

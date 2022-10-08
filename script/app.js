@@ -58,6 +58,7 @@ let addListPoint = document.querySelector(".list-point"), // Button in footer fo
   items = localStorage.getItem('"list1"') || false, // Check for availability the first key
   i = 0; // Index
 
+// Cheked for availability and create a web page
 if (items) {
   for (let j = 1; localStorage.getItem(`"list${j}"`); j++) {
     let item = JSON.parse(localStorage.getItem(`"list${j}"`));
@@ -84,13 +85,18 @@ addNote.onclick = () => {
   noteMenu.classList.add("active");
 };
 
-// Add new input for list
-
-addPoint.onclick = () => {
+// Create a new point for list
+const newInputCreate = () => {
   let newInput = document.createElement("input");
   newInput.type = "text";
   newInput.setAttribute("class", "point");
-  inputsContainer.appendChild(newInput);
+
+  return newInput;
+};
+
+// Add new input for list
+addPoint.onclick = () => {
+  inputsContainer.appendChild(newInputCreate());
 };
 
 // Close Menu Constructor with saving values
@@ -105,73 +111,115 @@ function CloseMenu() {
   }
 }
 
+// Get correct index
+
+const correctIndex = () => {
+  i = listsCount.length + 1;
+
+  return i;
+};
+
+// Set Event for create a new note
 addNoteButtons.forEach((button) => {
   button.addEventListener("click", addNoteFunc);
 });
 
-if (listsCount.length > 0) {
-  i = listsCount.length + 1;
-} else {
-  i = 1;
-}
-
-// Function for creating a new note and pushing all needeadly values inside, and push this note on web-page
-
-function addNoteFunc() {
-  console.log(i);
-  let caption;
-  let values;
-  let arr = {};
-  // Create a list for a future
-  const ul = document.createElement("ul");
-
-  // Create a new section ( Note )
+// Function for creating a new section for note
+const newNoteCreate = () => {
   const newNote = document.createElement("section");
   newNote.setAttribute("class", "list");
 
-  // Create a field
-  const head = document.createElement("h2");
-  if (listPointMenu.classList.contains("active")) {
-    caption = listPointMenu.querySelector("#head-list").value;
-    values = listPointMenu.querySelectorAll(".point");
-    values.forEach((el, index) => {
-      ul.innerHTML += `<li><input type="checkbox" id="${i}${index}"/><label for="${i}${index}">${el.value}</label></li>`;
-      newNote.append(ul);
-    });
-    // Add our list to note
-  } else {
-    caption = noteMenu.querySelector("#head-note").value;
-    values = noteMenu.querySelector("textarea").value;
-    let p = document.createElement("p");
-    p.innerHTML = values;
-    // Add our paragraph to note
-    newNote.append(p);
-  }
-  head.innerHTML = caption;
+  return newNote;
+};
 
-  if (head.innerHTML.length == 0) {
-    head.innerHTML = `List ${i}`;
-  }
+// Create a caption
+const captionCreate = () => {
+  const caption = document.createElement("h2");
+  listPointMenu.classList.contains("active")
+    ? (caption.innerHTML = listPointMenu.querySelector("#head-list").value)
+    : // noteMenu.classList.contains("active") ?
+      (caption.innerHTML = noteMenu.querySelector("#head-note").value);
 
+  correctIndex();
+
+  if (caption.innerHTML.length == 0) caption.innerHTML = `List ${i}`;
+  return caption;
+};
+
+// Create a new Ul
+const createList = () => {
+  const ul = document.createElement("ul");
+
+  return ul;
+};
+
+// PART OF CREATE A LIST CONTENT
+
+// Create our Ul list for our WorkList
+const createListContent = () => {
+  let ul = document.createElement("ul");
+  correctIndex();
+  let values = listPointMenu.querySelectorAll(".point");
+  values.forEach((el, index) => {
+    let li = document.createElement("li");
+    li.setAttribute("data-list-number", `${i}`);
+    li.innerHTML = `<input type="checkbox" id="${i}${index}"/><label for="${i}${index}">${el.value}</label>`;
+    ul.appendChild(li);
+  });
+
+  return ul;
+};
+
+// PART OF CREATE A NOTE CONTENT
+
+// Create our paragraph for Note
+const createNoteContent = () => {
+  let value = noteMenu.querySelector("textarea").value;
+  let p = document.createElement("p");
+  p.innerHTML = value;
+
+  return p;
+};
+
+// Create a Button "Save"
+const createButtonSave = () => {
   let saveAll = document.createElement("button");
   saveAll.setAttribute("class", "save");
   saveAll.innerHTML = "Save";
 
-  // Push header to note;
-  newNote.prepend(head);
-  newNote.appendChild(saveAll);
-  contentWrapper.append(newNote);
+  return saveAll;
+};
 
-  arr["content"] = newNote.innerHTML;
+// Collect and push our list or note
+function addNoteFunc() {
+  let newList = newNoteCreate();
+  newList.appendChild(captionCreate());
+  if (listPointMenu.classList.contains("active")) {
+    newList.appendChild(createListContent());
+  } else {
+    newList.appendChild(createNoteContent());
+  }
+  newList.appendChild(createButtonSave());
 
-  let itemsContent = JSON.stringify(arr);
+  contentWrapper.append(newList);
 
-  localStorage.setItem(`"list${i}"`, itemsContent);
-  i++;
+  pushToStorage();
 
   let mainMenu = document.querySelector(".active .menu-main");
   clearMenu(mainMenu);
 }
+
+// Function for add note to Storage
+
+const pushToStorage = () => {
+  let arr = {};
+
+  arr["content"] = contentWrapper.lastChild.innerHTML;
+
+  let itemsContent = JSON.stringify(arr);
+
+  localStorage.setItem(`"list${i}"`, itemsContent);
+};
 
 // Clear menu for next using
 
@@ -201,11 +249,10 @@ contentWrapper.onclick = (e) => {
     }
     e.target.classList.add("active");
     buttonSave = e.target.querySelector(".save");
+    buttonSave.onclick = updateDate;
   } else {
     return;
   }
-  // buttonSave.addEventListener("click", updateDate);
-  buttonSave.onclick = updateDate;
 };
 
 function updateDate(e) {

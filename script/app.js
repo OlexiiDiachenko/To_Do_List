@@ -45,7 +45,10 @@ const toggleSet = () => {
 
 // Section for deal with creating , searching , reading , pushing and seting
 
-let addListPoint = document.querySelector(".list-point"), // Button in footer for create list
+let pageHead = document.querySelector("h1.header"), // Header Web Page
+  description = document.querySelector("#roots"), // Our #roots or description
+  closeDescription = document.querySelector(".close_description"), // Button close description
+  addListPoint = document.querySelector(".list-point"), // Button in footer for create list
   addNote = document.querySelector(".note"), // Button in footer for create note
   contentWrapper = document.querySelector(".content-wrapper"), // Section with ready lists
   listsCount = contentWrapper.children, // Count lists on page
@@ -56,7 +59,15 @@ let addListPoint = document.querySelector(".list-point"), // Button in footer fo
   noteMenu = document.querySelector(".note-menu"), // Menu for creating Note
   addNoteButtons = document.querySelectorAll(".add-note"), // Buttons for push (add) note
   items = localStorage.getItem('"list1"') || false, // Check for availability the first key
+  saveAll = document.querySelector(".saveAll"), // Button saveAll
+  clearAll = document.querySelector(".clearAll"), // Button clearAll
   i = 0; // Index
+
+description.setAttribute("class", "active");
+
+pageHead.onclick = () => description.setAttribute("class", "active");
+
+closeDescription.onclick = () => description.removeAttribute("class");
 
 // Cheked for availability and create a web page
 if (items) {
@@ -276,10 +287,9 @@ const clearMenu = (parent) => {
 let elementNumber;
 
 contentWrapper.onclick = (e) => {
-  let buttonSave;
+  let closeItem = document.querySelector("section.active") || false;
   if (e.target.tagName == "SECTION" && !e.target.classList.contains("active")) {
-    if (document.querySelector("section.active")) {
-      let closeItem = document.querySelector("section.active");
+    if (closeItem) {
       removeItem(closeItem, "BUTTON");
       closeItem.classList.remove("active");
     }
@@ -287,12 +297,31 @@ contentWrapper.onclick = (e) => {
     createButtonOk(e.target);
     createEditButton(e.target);
     createRemoveItemButton(e.target);
+    disabledButtons();
+    closeItem = document.querySelector("section.active");
+    if (closeItem.querySelector("li")) {
+      let fields = closeItem.querySelectorAll("li");
+      fields.forEach((li) => {
+        createRemoveItemButton(li);
+      });
+    }
   } else {
     return;
   }
 };
 
 // Functions suppots for open our list
+
+// Disabled help buttons
+const disabledButtons = () => {
+  if (document.querySelector("section.active")) {
+    saveAll.disabled = true;
+    clearAll.disabled = true;
+  } else {
+    saveAll.disabled = false;
+    clearAll.disabled = false;
+  }
+};
 
 // Create a Button 'Ok'
 
@@ -308,6 +337,13 @@ const ok = (e) => {
   let parent = e.target.parentElement;
   parent.classList.remove("active");
   removeItem(parent, "BUTTON");
+  if (parent.querySelector("ul")) {
+    let ul = parent.querySelectorAll("li");
+    ul.forEach((li) => {
+      removeItem(li, "BUTTON");
+    });
+  }
+  disabledButtons();
 };
 
 // Create a Button "Save"
@@ -447,9 +483,16 @@ const updateDate = (e) => {
       .querySelector(".active p")
       .getAttribute("data-list-number");
   }
+  if (wrapper.querySelector("ul")) {
+    let ul = wrapper.querySelectorAll("li");
+    ul.forEach((li) => {
+      removeItem(li, "BUTTON");
+    });
+  }
   removeItem(wrapper, "BUTTON");
   pushToStorage(wrapper, number);
   wrapper.classList.remove("active");
+  disabledButtons();
 };
 
 // Add event for our checkboxs
@@ -493,51 +536,70 @@ main.addEventListener("click", setStatus);
 
 // Fuctnions Clear
 
-let clearAll = document.querySelector(".clearAll");
+const removeItemA = (parent) => {
+  if (parent.children.length > 0) {
+    parent.removeChild(parent.lastChild);
+    removeItemA(parent);
+  } else {
+    return;
+  }
+};
+
 clearAll.onclick = () => {
-  removeItem(contentWrapper, "SECTION");
+  removeItemA(contentWrapper);
 };
 
 function removeOneItem() {
-  let checkBlock = this.parentElement.querySelector("ul") || false;
-  let index;
-
-  if (checkBlock) {
-    index = checkBlock.getAttribute("data-list-number");
-  } else {
-    index = checkBlock
-      .querySelector(".active p")
-      .getAttribute("data-list-number");
-  }
-
-  if (this.parentElement.tagName == "SECTION") {
-    removeSection(this, index);
-  } else {
-    this.parentElement.remove();
-  }
-}
-
-function removeSection(element, number) {
-  localStorage.removeItem(`"list${number}"`);
-  element.parentElement.remove();
+  this.parentElement.remove();
+  disabledButtons();
 }
 
 // Function SaveAll
 
-let saveAll = document.querySelector(".saveAll");
 saveAll.onclick = () => {
   let activeSection = document.querySelector("section.active") || false;
   if (activeSection) {
     removeItem(activeSection, "BUTTON");
     activeSection.classList.remove("active");
+    disabledButtons();
   }
-  let listsSecions = document.querySelectorAll("section.list") || false;
-  if (listsSections) {
-    listsSections.forEach((section) => {
-      let index = Number(
-        section.lastElementChild.getAttribute("data-list-number")
-      );
-      pushToStorage(section, index);
+  renote();
+};
+
+const renote = () => {
+  let index;
+  let sections = document.querySelectorAll("section.list").length || false;
+  console.log(sections);
+  setNewDatas(sections);
+};
+
+const setNewDatas = (count) => {
+  let i = 1;
+  if (count == 1) {
+    let newSection = document.querySelector("section.list");
+    newSection.lastElementChild.setAttribute("data-list-number", "1");
+    setUpdateStorage();
+    pushToStorage(newSection, i);
+  } else if (count > 1) {
+    let newSections = document.querySelectorAll("section.list");
+    setUpdateStorage();
+    newSections.forEach((section) => {
+      section.lastElementChild.setAttribute("data-list-number", i);
+      pushToStorage(section, i);
+      i++;
     });
+  }
+};
+
+const setUpdateStorage = () => {
+  let theme = localStorage.getItem("theme") || "light",
+    toggle = localStorage.getItem("toggle") || false;
+
+  localStorage.clear();
+  if (theme) {
+    localStorage.setItem("theme", theme);
+  }
+  if (toggle) {
+    localStorage.setItem("toggle", toggle);
   }
 };

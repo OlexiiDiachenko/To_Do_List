@@ -570,7 +570,11 @@ const renote = () => {
   let index;
   let sections = document.querySelectorAll("section.list").length || false;
   console.log(sections);
-  setNewDatas(sections);
+  if (sections) {
+    setNewDatas(sections);
+  } else {
+    setNewDatas(0);
+  }
 };
 
 const setNewDatas = (count) => {
@@ -588,6 +592,8 @@ const setNewDatas = (count) => {
       pushToStorage(section, i);
       i++;
     });
+  } else {
+    setUpdateStorage();
   }
 };
 

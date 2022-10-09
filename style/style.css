@@ -163,6 +163,7 @@ section.list::after {
 section.list.active {
   grid-column: span 4;
   max-height: 100%;
+  overflow: visible;
 }
 
 section.list.active::after {
@@ -247,6 +248,7 @@ p {
 
 /* Button Save Changes */
 .save,
+.ok,
 .edit {
   position: absolute;
   right: 20px;
@@ -255,12 +257,28 @@ p {
   background-color: transparent;
   color: var(--main-text-color);
 }
+
+.ok,
 .save {
   bottom: 20px;
 }
 
 .edit {
   top: 20px;
+}
+
+.remove-item {
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateY(-50%);
+  color: red;
+  background-color: var(--background-list-color);
+  border: 1px solid var(--border-list-color);
+  border-radius: 50%;
 }
 
 /* Footer */
@@ -292,6 +310,23 @@ footer ul li {
 footer ul li button {
   background-color: transparent;
   font-size: 20px;
+  color: var(--main-text-color);
+}
+
+/* Clear All */
+
+.saveAll,
+.clearAll {
+  background-color: transparent;
+  font-size: 25px;
+  color: red;
+  position: absolute;
+  right: 40px;
+  max-width: 150px;
+}
+
+.saveAll {
+  right: 200px;
   color: var(--main-text-color);
 }
 
@@ -400,6 +435,110 @@ textarea {
   resize: vertical;
 }
 
+@media (min-width: 3001px) {
+  /* Header */
+  header {
+    height: 200px;
+  }
+  header h1 {
+    font-size: 140px;
+  }
+
+  header button.toggle {
+    transform: translateY(-70px);
+    width: 140px;
+    height: 140px;
+    font-size: 100px;
+  }
+
+  .content-wrapper {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  section.list {
+    max-height: 400px;
+  }
+
+  section.list h2 {
+    font-size: 45px;
+    line-height: 60px;
+  }
+
+  section.list label,
+  section.list p {
+    font-size: 30px;
+  }
+
+  section.list.active {
+    grid-column: span 6;
+  }
+
+  section.list.active h2 {
+    font-size: 70px;
+    line-height: 100px;
+    margin-bottom: 60px;
+  }
+
+  section.list.active label,
+  section.list.active p,
+  section.list.active button {
+    font-size: 50px;
+  }
+}
+
+@media (min-width: 2000px) and (max-width: 3000px) {
+  /* Header */
+  header {
+    height: 150px;
+  }
+  header h1 {
+    font-size: 90px;
+    line-height: 120px;
+  }
+
+  header button.toggle {
+    right: 40px;
+    transform: translateY(-45px);
+    width: 90px;
+    height: 90px;
+    font-size: 60px;
+  }
+
+  .content-wrapper {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  section.list {
+    max-height: 270px;
+  }
+
+  section.list h2 {
+    font-size: 30px;
+    line-height: 45px;
+  }
+
+  section.list label,
+  section.list p {
+    font-size: 25px;
+  }
+
+  section.list.active {
+    grid-column: span 5;
+  }
+
+  section.list.active h2 {
+    font-size: 40px;
+    line-height: 60px;
+    margin-bottom: 30px;
+  }
+
+  section.list.active label,
+  section.list.active p,
+  section.list.active button {
+    font-size: 30px;
+  }
+}
+
 @media (min-width: 900px) and (max-width: 1200px) {
   .content-wrapper {
     grid-template-columns: repeat(3, 1fr);
@@ -426,7 +565,14 @@ textarea {
   }
 }
 
-@media (min-width: 320px) and (max-width: 599px) {
+@media (max-width: 599px) {
+  [data-theme="light"] {
+    --footer-height: 30px;
+  }
+
+  [data-theme="dark"] {
+    --footer-height: 30px;
+  }
   /* Header */
 
   header {
@@ -455,6 +601,7 @@ textarea {
   }
 
   section.list.active {
+    position: relative;
     max-width: 100%;
   }
 
@@ -470,5 +617,29 @@ textarea {
   .note-menu {
     width: 80vw;
     padding: 20px 20px 40px;
+  }
+
+  /* Footer */
+
+  /* Footer Buttons */
+
+  footer ul li {
+    margin-left: 20px;
+  }
+
+  footer ul li button {
+    font-size: 18px;
+  }
+
+  /* Clear All */
+
+  .clearAll {
+    font-size: 15px;
+    right: 20px;
+  }
+
+  .saveAll {
+    font-size: 15px;
+    right: 110px;
   }
 }

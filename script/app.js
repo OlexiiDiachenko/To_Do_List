@@ -71,6 +71,37 @@ if (items) {
   }
 }
 
+// Set checked for checkboxs, which earlier we have mark
+const inputsCheckboxs =
+  document.querySelectorAll("input[type='checkbox']") || false;
+
+if (inputsCheckboxs) {
+  inputsCheckboxs.forEach((checkbox) => {
+    if (checkbox.getAttribute("data-status")) {
+      checkbox.checked = "true";
+    }
+  });
+}
+
+// Function for remove item or items frome parent Node
+const removeItem = (parentElement, item) => {
+  while (parentElement.lastChild.tagName == item) {
+    let lastCloseItemChild = parentElement.lastChild;
+    lastCloseItemChild.remove();
+  }
+};
+
+// Cleare our Lists from needless buttons
+const sections = document.querySelectorAll("section.list") || false;
+
+if (sections) {
+  sections.forEach((section) => {
+    if (section.lastElementChild.tagName == "BUTTON") {
+      removeItem(section, "BUTTON");
+    }
+  });
+}
+
 // Open a context menu with list creating
 
 addListPoint.onclick = () => {
@@ -253,22 +284,31 @@ contentWrapper.onclick = (e) => {
       closeItem.classList.remove("active");
     }
     e.target.classList.add("active");
-    createButtonSave(e.target);
+    createButtonOk(e.target);
     createEditButton(e.target);
+    createRemoveItemButton(e.target);
   } else {
     return;
   }
 };
 
-// Function for remove item or items frome parent Node
-const removeItem = (parentElement, item) => {
-  while (parentElement.lastChild.tagName == item) {
-    let lastCloseItemChild = parentElement.lastChild;
-    lastCloseItemChild.remove();
-  }
+// Functions suppots for open our list
+
+// Create a Button 'Ok'
+
+const createButtonOk = (element) => {
+  let buttonOk = document.createElement("button");
+  buttonOk.setAttribute("class", "ok");
+  buttonOk.innerHTML = "Ok";
+  buttonOk.addEventListener("click", ok);
+  element.append(buttonOk);
 };
 
-// Functions suppots for open our list
+const ok = (e) => {
+  let parent = e.target.parentElement;
+  parent.classList.remove("active");
+  removeItem(parent, "BUTTON");
+};
 
 // Create a Button "Save"
 const createButtonSave = (element) => {
@@ -288,13 +328,27 @@ const createEditButton = (element) => {
   element.appendChild(editButton);
   if (element.querySelector("label")) {
     editButton.addEventListener("click", setEditList);
-  } // else {
-  // editButton.addEventListener("click", setEditNote);
-  //}
+  } else {
+    editButton.addEventListener("click", setEditNote);
+  }
+};
+
+// Create Remove Item Button
+
+const createRemoveItemButton = (parent) => {
+  let removeItemButton = document.createElement("button");
+  removeItemButton.setAttribute("class", "remove-item");
+  removeItemButton.innerHTML = `<i class="fa-solid fa-trash"></i>`;
+  parent.appendChild(removeItemButton);
+  removeItemButton.addEventListener("click", removeOneItem);
 };
 
 // Function for get changes for List
 const setEditList = () => {
+  let parent = document.querySelector("section.active");
+  let buttonOk = document.querySelector(".active .ok");
+  buttonOk.remove();
+  createButtonSave(parent);
   document.querySelector(".edit").disabled = "true";
   let ul = document.querySelector(".active ul");
   createAddInputButton(ul);
@@ -346,12 +400,6 @@ const createNewListField = (parent, forArr) => {
   forArr.push(index);
 };
 
-// Function for get changes for Note
-const setEditNote = () => {
-  let labels = document.querySelector(".active p");
-  let paragraph = labels.getAttribute("data-list-number");
-};
-
 // Set new values for List
 const newValuesList = (parent) => {
   let newDatas = parent.querySelectorAll("input.new-data");
@@ -362,19 +410,134 @@ const newValuesList = (parent) => {
   });
 };
 
+// Function for get changes for Note
+const setEditNote = () => {
+  let parent = document.querySelector("section.active");
+  let buttonOk = document.querySelector(".active .ok");
+  buttonOk.remove();
+  createButtonSave(parent);
+  let paragraph = document.querySelector(".active p");
+  let num = paragraph.getAttribute("data-list-number");
+  let text = paragraph.innerHTML;
+
+  paragraph.outerHTML = `<textarea data-list-number='${num}'>${text}</textarea>`;
+};
+
+// Function for get changes for Note
+const newValuesNote = () => {
+  let paragraph = document.querySelector(".active textarea");
+  let num = paragraph.getAttribute("data-list-number");
+  let value = paragraph.value;
+
+  paragraph.outerHTML = `<p data-list-number='${num}'>${value}</p>`;
+};
+
 // Fucntion for close list and set new values. SET CHANGES
 const updateDate = (e) => {
-  let element = document.querySelector("section.active");
-  if (element.querySelector("input.new-data")) {
-    newValuesList(element);
-  } //else {
-  //   newValuesNote(element);
-  // }
   let wrapper = e.target.parentElement;
-  let number =
-    document.querySelector(".active ul").getAttribute("data-list-number") ||
-    document.querySelector(".active textarea").getAttribute("data-list-number");
+  let number;
+  if (wrapper.querySelector("input.new-data")) {
+    newValuesList(wrapper);
+    number = document
+      .querySelector(".active ul")
+      .getAttribute("data-list-number");
+  } else {
+    newValuesNote(wrapper);
+    number = document
+      .querySelector(".active p")
+      .getAttribute("data-list-number");
+  }
   removeItem(wrapper, "BUTTON");
   pushToStorage(wrapper, number);
   wrapper.classList.remove("active");
+};
+
+// Add event for our checkboxs
+
+let main = document.querySelector("main");
+
+const setStatus = (e) => {
+  if (
+    e.target.classList.contains("list") &&
+    e.target.classList.contains("active")
+  ) {
+    let wrapper = e.target;
+    if (wrapper.querySelector("ul")) {
+      let checkboxs = wrapper.querySelectorAll('input[type="checkbox"]');
+      checkboxs.forEach((checkbox) => {
+        checkbox.addEventListener("click", setDataStatus);
+      });
+    } else {
+      return;
+    }
+  } else {
+    return;
+  }
+};
+
+function setDataStatus() {
+  let wrapper = document.querySelector("section.active");
+  let number = wrapper.querySelector("ul").getAttribute("data-list-number");
+  if (this.getAttribute("data-status")) {
+    this.removeAttribute("data-status");
+    this.unchecked = "true";
+  } else {
+    this.setAttribute("data-status", "completed");
+    this.checked = "true";
+  }
+  console.log(this);
+  pushToStorage(wrapper, number);
+}
+
+main.addEventListener("click", setStatus);
+
+// Fuctnions Clear
+
+let clearAll = document.querySelector(".clearAll");
+clearAll.onclick = () => {
+  removeItem(contentWrapper, "SECTION");
+};
+
+function removeOneItem() {
+  let checkBlock = this.parentElement.querySelector("ul") || false;
+  let index;
+
+  if (checkBlock) {
+    index = checkBlock.getAttribute("data-list-number");
+  } else {
+    index = checkBlock
+      .querySelector(".active p")
+      .getAttribute("data-list-number");
+  }
+
+  if (this.parentElement.tagName == "SECTION") {
+    removeSection(this, index);
+  } else {
+    this.parentElement.remove();
+  }
+}
+
+function removeSection(element, number) {
+  localStorage.removeItem(`"list${number}"`);
+  element.parentElement.remove();
+}
+
+// Function SaveAll
+
+let saveAll = document.querySelector(".saveAll");
+saveAll.onclick = () => {
+  let activeSection = document.querySelector("section.active") || false;
+  if (activeSection) {
+    removeItem(activeSection, "BUTTON");
+    activeSection.classList.remove("active");
+  }
+  let listsSecions = document.querySelectorAll("section.list") || false;
+  if (listsSections) {
+    listsSections.forEach((section) => {
+      let index = Number(
+        section.lastElementChild.getAttribute("data-list-number")
+      );
+      pushToStorage(section, index);
+    });
+  }
 };
